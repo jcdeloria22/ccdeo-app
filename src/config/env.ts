@@ -64,6 +64,23 @@ const schema = z.object({
    * set those headers itself, so trusting them without a proxy in front lets
    * anyone claim any address. Off unless said otherwise.
    */
+  /**
+   * TLS to the database.
+   *
+   *  - `off`      — no TLS. Correct for a loopback cluster with trust auth, and
+   *                 wrong anywhere the connection crosses a network.
+   *  - `require`  — TLS, certificate verified against the system roots.
+   *  - `no-verify` — TLS, certificate NOT verified. This still stops passive
+   *                 eavesdropping and does NOT stop an active interceptor, so it
+   *                 is for a provider whose certificate chain is not publicly
+   *                 rooted and nothing else. Railway's private network does not
+   *                 need TLS at all; its public proxy does.
+   *
+   * Defaults to `off` because the default deployment is loopback. A hosted one
+   * must say what it wants rather than inherit a guess.
+   */
+  DATABASE_SSL: z.enum(['off', 'require', 'no-verify']).default('off'),
+
   TRUST_PROXY: z
     .enum(['true', 'false'])
     .optional()

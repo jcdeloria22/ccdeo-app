@@ -110,7 +110,7 @@ that to make the browser happy.
 | **DC-10** ageing panel and reminder engine | **done**, SLAs confirmed |
 | ***then*** the first QCP generator | **done**, every rule verified |
 
-622 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
+638 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
 installed and its signature database is loaded, so the real-scanner tests run.
 
 **Consolidating into this project**, decided 15 September 2026: the Document
@@ -275,6 +275,53 @@ logs:
 ```bash
 npm run user:create -- --email you@dpwh.gov.ph --name "Your Name" --role admin
 ```
+
+## Deploying
+
+The container runs `node dist/db/migrate.js && node dist/main.js`, so a deploy
+cannot serve a build whose schema has not been applied. `migrate` records a hash
+per file: a second instance starting concurrently applies nothing, and a
+migration that has been *edited* since it ran is refused rather than silently
+re-applied.
+
+Set these together — `AUTH_MODE=password` is what permits binding anything but
+loopback, and the other three are what make that safe:
+
+| Variable | Value | Why |
+|---|---|---|
+| `AUTH_MODE` | `password` | Without it the bind guard refuses to start. |
+| `BIND_HOST` | `0.0.0.0` | What a container router needs to reach the app. |
+| `NODE_ENV` | `production` | Makes the session cookie `Secure`, and refuses to let it not be. |
+| `TRUST_PROXY` | `true` | Behind a router that sets `X-Forwarded-For`. Off anywhere else: a client can set that header itself. |
+| `DATABASE_URL` | from the provider | Required in password mode — accounts live there. |
+| `DATABASE_SSL` | `require` | Or `no-verify` for a provider whose chain is not publicly rooted. A private network between app and database needs neither. |
+
+Then create the first account. There is no bootstrap-from-environment path,
+because a password in an environment variable is a password in the platform's
+dashboard and its logs:
+
+```bash
+npm run user:create -- --email you@dpwh.gov.ph --name "Your Name" --role admin
+```
+
+**Two things a hosted deployment changes, and neither is cosmetic.**
+
+*The database role.* Migration `0002` creates `dpwh_app` with no password —
+correct for a loopback cluster with trust auth and wrong on a managed provider,
+where the app will connect as the database owner instead. The append-only
+guarantee survives that: it is enforced by a **trigger**, so a role that was
+granted `UPDATE` is still refused. The grants are defence in depth and that layer
+is what is lost. Restoring it means creating `dpwh_app` with a password on the
+hosted cluster and pointing `DATABASE_URL` at it.
+
+*Storage and scanning are not ready for it.* `FilesystemStorage` writes to the
+container's disk, which is ephemeral — every deploy would delete every uploaded
+document — and `presignPut` returns a `file+put://` URL no browser can PUT to.
+Without ClamAV in the image the gate fails closed and every upload stays
+`Quarantined`, which is correct and also means uploads do not work. **Deploy
+without uploads, or finish those two first.** Everything else — the register,
+readiness, reminders, the audit trail, the Builder, the reviewers and the
+workflow — runs.
 
 ## Storage and the scan gate
 

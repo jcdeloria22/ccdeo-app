@@ -1,0 +1,15 @@
+# Everything the image must not carry.
+node_modules
+dist
+web/dist
+.git
+.env
+.blobs
+.demo-blobs
+.pgsql
+.pgdata
+test
+ocr-assets/*.map
+*.log
+coverage
+README.md
