@@ -65,6 +65,24 @@ const schema = z.object({
    * anyone claim any address. Off unless said otherwise.
    */
   /**
+   * Object storage.
+   *
+   * All four are required together — a half-configured bucket would fall back to
+   * the filesystem store silently, and on a container platform that means every
+   * uploaded document disappears at the next deploy. `conditionalIssues` refuses
+   * a partial set rather than guessing which half was meant.
+   *
+   * The secret is read here and passed to the storage binding. It is never
+   * logged, never returned by a route, and never included in an error.
+   */
+  R2_ACCOUNT_ID: z.string().min(1).optional(),
+  R2_BUCKET: z.string().min(1).optional(),
+  R2_ACCESS_KEY_ID: z.string().min(1).optional(),
+  R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  /** For an S3-compatible store that is not R2 — MinIO locally, say. */
+  R2_ENDPOINT: z.string().url().optional(),
+
+  /**
    * TLS to the database.
    *
    *  - `off`      — no TLS. Correct for a loopback cluster with trust auth, and
@@ -109,6 +127,21 @@ export class ConfigError extends Error {
 function conditionalIssues(source: NodeJS.ProcessEnv): string[] {
   const issues: string[] = [];
   const authMode = source.AUTH_MODE ?? 'none';
+
+  /*
+   * Object storage, checked for BOTH modes and therefore before either branch —
+   * the password branch returns early, and a hosted deployment is precisely
+   * where half-configured storage does the damage.
+   */
+  const r2 = ['R2_ACCOUNT_ID', 'R2_BUCKET', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'] as const;
+  const givenR2 = r2.filter((k) => source[k]);
+  if (givenR2.length > 0 && givenR2.length < r2.length) {
+    const missing = r2.filter((k) => !source[k]);
+    issues.push(
+      `  ${missing.join(', ')}: object storage is half-configured. Set all of ${r2.join(', ')} or none — ` +
+        'falling back to the local filesystem silently would lose every upload at the next deploy',
+    );
+  }
 
   if (authMode === 'password') {
     /*

@@ -32,6 +32,7 @@ import { UploadsRepository } from '../uploads/uploads.repository';
 import { STORAGE } from '../storage/storage.token';
 import { SCANNER } from '../scan/scanner.token';
 import { FilesystemStorage } from '../storage/filesystem.storage';
+import { R2Storage } from '../storage/r2.storage';
 import type { Storage } from '../storage/storage';
 import { ClamAvScanner } from '../scan/clamav.scanner';
 import type { Scanner } from '../scan/scanner';
@@ -70,8 +71,24 @@ const fromPool = <T>(Ctor: new (p: Pool) => T) => ({
      */
     {
       provide: STORAGE,
-      useFactory: (env: Env): Storage =>
-        new FilesystemStorage(env.STORAGE_DIR ?? path.join(process.cwd(), '.blobs')),
+      useFactory: (env: Env): Storage => {
+        /*
+         * R2 when it is configured, the local directory otherwise. `loadEnv`
+         * refuses a half-configured bucket, so reaching here with an account id
+         * means the whole set is present — this cannot silently fall back to a
+         * filesystem that a container platform wipes on every deploy.
+         */
+        if (env.R2_ACCOUNT_ID && env.R2_BUCKET && env.R2_ACCESS_KEY_ID && env.R2_SECRET_ACCESS_KEY) {
+          return new R2Storage({
+            accountId: env.R2_ACCOUNT_ID,
+            bucket: env.R2_BUCKET,
+            accessKeyId: env.R2_ACCESS_KEY_ID,
+            secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+            endpoint: env.R2_ENDPOINT,
+          });
+        }
+        return new FilesystemStorage(env.STORAGE_DIR ?? path.join(process.cwd(), '.blobs'));
+      },
       inject: [ENV],
     },
     { provide: SCANNER, useFactory: (): Scanner => new ClamAvScanner() },

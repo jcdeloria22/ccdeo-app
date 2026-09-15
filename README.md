@@ -110,7 +110,7 @@ that to make the browser happy.
 | **DC-10** ageing panel and reminder engine | **done**, SLAs confirmed |
 | ***then*** the first QCP generator | **done**, every rule verified |
 
-638 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
+675 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
 installed and its signature database is loaded, so the real-scanner tests run.
 
 **Consolidating into this project**, decided 15 September 2026: the Document
@@ -314,14 +314,24 @@ granted `UPDATE` is still refused. The grants are defence in depth and that laye
 is what is lost. Restoring it means creating `dpwh_app` with a password on the
 hosted cluster and pointing `DATABASE_URL` at it.
 
-*Storage and scanning are not ready for it.* `FilesystemStorage` writes to the
-container's disk, which is ephemeral — every deploy would delete every uploaded
-document — and `presignPut` returns a `file+put://` URL no browser can PUT to.
-Without ClamAV in the image the gate fails closed and every upload stays
-`Quarantined`, which is correct and also means uploads do not work. **Deploy
-without uploads, or finish those two first.** Everything else — the register,
-readiness, reminders, the audit trail, the Builder, the reviewers and the
-workflow — runs.
+*Storage and scanning.* Both are now ready, and both need configuring.
+
+**R2** is used whenever `R2_ACCOUNT_ID`, `R2_BUCKET`, `R2_ACCESS_KEY_ID` and
+`R2_SECRET_ACCESS_KEY` are all set; the local directory otherwise. A *half*
+configured bucket is refused at startup rather than falling back, because the
+fallback is a filesystem the platform wipes on every deploy. Signing is
+hand-written SigV4 (`src/storage/sigv4.ts`) rather than the AWS SDK — tens of
+megabytes of dependency for five operations against one bucket — and is verified
+against AWS's published test vectors, because hand-rolling a signing algorithm is
+only defensible if it is checked against something authoritative.
+
+**ClamAV** is installed in the image and its signatures are fetched at build
+time, in their own stage. A failed download fails the build on purpose: the gate
+fails closed, so an image without signatures would accept uploads and leave every
+one of them `Quarantined` for ever — working, correct, and baffling. `clamscan`
+runs once per upload and loads the whole signature set each time, which is
+seconds of CPU and a few hundred MB; a resident `clamd` is the thing to reach for
+if uploads become frequent.
 
 ## Storage and the scan gate
 
