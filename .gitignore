@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+*.log
+coverage/
+
+# local dev cluster (scripts/pg-local.sh)
+.pgsql/
+.pgdata/
+web/dist
+
+# Uploaded document content. STORAGE_DIR is unset in development, so
+# FilesystemStorage falls back to ./.blobs (see core.module.ts) — the earlier
+# entry named .demo-blobs, which matches nothing, so real uploads were staged
+# for commit. Both names are covered now.
+.blobs/
+.demo-blobs/
+
+# Scratch output from a golden-file update or a local scan
+*.local
+.DS_Store

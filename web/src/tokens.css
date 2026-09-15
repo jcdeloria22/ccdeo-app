@@ -1,0 +1,262 @@
+/* ============================================================
+   CCDEO — design system
+
+   SOURCE OF RECORD, confirmed 15 September 2026. Edit the system here and
+   nowhere else.
+
+   `dpwh-doc-control/web/src/tokens.css` is a byte-identical copy of this file —
+   that project deploys on its own, so it cannot reach into a sibling directory
+   at build time. After changing anything here, run `npm run sync:design` there;
+   its test suite fails on drift in either direction, so a stale copy is caught
+   rather than discovered.
+
+   CCDEO-BAC-Docs.html v0.6 is where this was lifted from. It is history now, not
+   an upstream: changes do not flow from it any more.
+
+   Tokens, chrome, chips, rail, buttons, cards and the type scale are lifted
+   from CCDEO-BAC-Docs.html v0.6. Three of its rules are load-bearing and are
+   kept exactly as written there:
+
+     --color-accent does not flip between themes. White on it is 5.12:1;
+       a brighter orange fails (white on #d4620a is 3.49:1).
+     --color-divider is 50% ink, not 34% — below that the 2px rules that do
+       all the organising fall under 3:1.
+     Nothing an operator must read goes below 12px or 72% ink (.q).
+   ============================================================ */
+:root{
+  --color-bg:#f4f6f8;
+  --color-surface:#e8edf2;
+  --color-text:#14202b;
+  --color-accent:#b25206;
+  --color-divider:color-mix(in srgb,#14202b 50%,transparent);
+
+  --color-neutral-100:#f7f9fb; --color-neutral-200:#e6ebf0; --color-neutral-300:#ccd5de;
+  --color-neutral-400:#adb9c5; --color-neutral-500:#8b97a4; --color-neutral-600:#6b7784;
+  --color-neutral-700:#4e5a67; --color-neutral-800:#33404c; --color-neutral-900:#1c2833;
+
+  --color-accent-100:#fff2e6; --color-accent-200:#ffdfc2; --color-accent-300:#ffc492;
+  --color-accent-400:#fca55c; --color-accent-500:#e8781a; --color-accent-600:#b25206;
+  --color-accent-700:#8c3f05; --color-accent-800:#6b3004; --color-accent-900:#472003;
+
+  --color-brand-100:#eaf2fc; --color-brand-200:#cde0f6; --color-brand-300:#a3c6ec;
+  --color-brand-400:#6ea5dd; --color-brand-500:#3f80c6; --color-brand-600:#1f5faa;
+  --color-brand-700:#0d4b8c; --color-brand-800:#093a6d; --color-brand-900:#06294e;
+
+  --color-grn:#1f7a46; --color-red:#a8231c;
+
+  /* Colour names the lifted process-flow data refers to, mapped onto this
+     palette rather than re-authored inside the data. */
+  --blu:#1f5faa; --grn:#1f7a46; --pur:#7c4dbd; --red:#a8231c;
+  --cyan:#0e7490; --amber:#b25206;
+
+  --font-heading:"Archivo","Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  --font-body:"Archivo","Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px;
+  --radius:0px;
+}
+
+[data-theme="dark"]{
+  --color-bg:#10161c;
+  --color-surface:#182029;
+  --color-text:#eef3f7;
+  --color-divider:color-mix(in srgb,#eef3f7 50%,transparent);
+
+  --color-neutral-100:#1c2530; --color-neutral-200:#28343f; --color-neutral-300:#3a4854;
+  --color-neutral-400:#55636f; --color-neutral-500:#78868f; --color-neutral-600:#9aa7b1;
+  --color-neutral-700:#bcc7d0; --color-neutral-800:#d8e0e7; --color-neutral-900:#f2f6fa;
+
+  --color-accent-100:#3a1c05; --color-accent-200:#542905; --color-accent-300:#7a3d05;
+  --color-accent-400:#b25206; --color-accent-500:#e8781a; --color-accent-600:#f0902f;
+  --color-accent-700:#ffb066; --color-accent-800:#ffcb99; --color-accent-900:#ffe6cf;
+
+  --color-brand-100:#0d1c2e; --color-brand-200:#122a45; --color-brand-300:#183c62;
+  --color-brand-400:#1f5faa; --color-brand-500:#3f80c6; --color-brand-600:#6ea5dd;
+  --color-brand-700:#9cc4ea; --color-brand-800:#c3daf4; --color-brand-900:#e4eefb;
+
+  --color-grn:#4ac07d; --color-red:#ff8a80;
+  --blu:#6ea5dd; --grn:#4ac07d; --pur:#b98ae8; --red:#ff8a80;
+  --cyan:#4cc9e0; --amber:#f0902f;
+}
+html[data-theme="dark"]{color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--color-bg);color:var(--color-text);
+  font-family:var(--font-body);font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+button,input,select,textarea{font-family:inherit;color:inherit}
+h1{font-size:38px;margin:0} h2{font-size:24px;margin:0} h3{font-size:19px;margin:0}
+h4{font-size:16px;margin:0}
+p{margin:0 0 var(--space-3)}
+a{color:var(--color-brand-700)}
+
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+html[data-theme="dark"] :focus-visible{outline-color:var(--color-accent-600)}
+::selection{background:color-mix(in srgb,var(--color-accent) 30%,transparent)}
+
+/* Legibility floor: nothing an operator must read goes below 12px or 72% ink. */
+.q{color:color-mix(in srgb,var(--color-text) 72%,transparent)}
+.mono{font-family:var(--font-mono)}
+.hide{display:none !important}
+.sp{flex:1}
+
+.skip{
+  position:absolute;left:-9999px;top:0;z-index:100;padding:10px 16px;
+  background:var(--color-accent);color:#fff;font-weight:800;font-family:var(--font-heading);
+}
+.skip:focus{left:8px;top:8px}
+
+/* — chrome — */
+.chrome{
+  flex:none;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 16px;
+  background:var(--color-brand-900);color:var(--color-brand-200);
+}
+html[data-theme="dark"] .chrome{background:var(--color-brand-200);color:var(--color-brand-900)}
+.chrome .mark{font:800 12px/1 var(--font-heading);letter-spacing:.12em}
+.chrome .ctx{font-size:12px;opacity:.8}
+.chrome-r{display:flex;margin-left:auto;align-items:center;gap:12px}
+.chipgroup{display:flex}
+.chip{
+  cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:12px;
+  padding:5px 11px;margin-right:-1px;min-height:28px;
+  border:1px solid currentColor;background:transparent;color:inherit;
+}
+.chip[aria-pressed="true"]{background:var(--color-accent);border-color:var(--color-accent);color:#fff}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+
+/* — buttons — */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  min-height:36px;cursor:pointer;text-decoration:none;
+  font-family:var(--font-heading);font-weight:800;font-size:14px;line-height:1.2;
+  color:var(--color-text);background:transparent;border:1px solid transparent;
+  padding:var(--space-2) 14px;border-radius:var(--radius);
+}
+.btn-primary{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
+.btn-primary:hover{background:var(--color-accent-700);border-color:var(--color-accent-700)}
+.btn-primary:active{background:var(--color-accent-800);border-color:var(--color-accent-800)}
+.btn-secondary{border-color:var(--color-divider)}
+.btn-secondary:hover{background:color-mix(in srgb,var(--color-text) 8%,transparent)}
+.btn-secondary:active{background:color-mix(in srgb,var(--color-text) 15%,transparent)}
+.btn-brand{background:var(--color-brand-700);color:var(--color-bg);border-color:var(--color-brand-700)}
+.btn-brand:hover{background:var(--color-brand-800);border-color:var(--color-brand-800)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-sm{min-height:30px;font-size:12px;padding:5px 10px}
+.btn-block{width:100%;justify-content:flex-start;text-align:left;margin-top:var(--space-2)}
+
+/* — layout — */
+.shell{flex:1;display:flex;align-items:stretch;min-height:0}
+.rail{
+  flex:none;width:250px;border-right:2px solid var(--color-divider);
+  display:flex;flex-direction:column;background:var(--color-bg);
+  transition:width .16s ease;overflow:hidden;
+}
+.rail.min{width:62px}
+.rail-brand{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  padding:18px 12px 14px 16px;border-bottom:2px solid var(--color-divider);
+}
+.rail.min .rail-brand{flex-direction:column;align-items:center;gap:10px;padding:14px 0}
+.rail-brand .nm{font:800 22px/1 var(--font-heading);letter-spacing:-.02em;color:var(--color-brand-700)}
+.rail-brand .sub{font-size:12px;line-height:1.45;margin-top:6px}
+.rail-brand .cube{
+  width:30px;height:30px;background:var(--color-brand-700);color:var(--color-bg);
+  font:800 16px/30px var(--font-heading);text-align:center;
+}
+.railtog{flex:none;width:28px;min-height:28px;padding:0}
+.rail-scroll{overflow-y:auto;flex:1}
+.rail-f{
+  padding:12px 16px;border-top:2px solid var(--color-divider);
+  font-size:12px;line-height:1.5;
+}
+.rail-f b{font-family:var(--font-heading);color:var(--color-text);display:block;margin-bottom:3px}
+.rail.min .rail-f,.rail.min .rail-brand .tx,.rail.min .grp-h{display:none}
+
+.grp-h{
+  padding:14px 16px 6px;font-family:var(--font-heading);font-weight:800;font-size:12px;
+  letter-spacing:.06em;color:var(--color-neutral-600);
+}
+.navbtn{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
+  background:transparent;font-family:var(--font-heading);font-weight:800;font-size:15px;
+  line-height:1.2;border:0;border-left:3px solid transparent;color:var(--color-text);
+  min-height:44px;padding:11px 16px;
+}
+.navbtn:hover{background:color-mix(in srgb,var(--color-text) 6%,transparent)}
+.navbtn[aria-current="page"]{
+  background:var(--color-brand-100);border-left-color:var(--color-brand-700);
+  color:var(--color-brand-700);
+}
+.navbtn .lb{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rail.min .navbtn{justify-content:center;padding:14px 0}
+
+main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--color-surface);overflow:hidden}
+.viewwrap{flex:1;overflow-y:auto;padding:var(--space-6)}
+.view{max-width:1180px}
+.vhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:var(--space-4)}
+.vhead h1{font-size:34px}
+.vhead .q{font-size:13px}
+
+/* — surfaces — */
+.card{
+  background:var(--color-bg);border:2px solid var(--color-divider);
+  padding:var(--space-4);
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0}
+.cards>*{border:2px solid var(--color-divider);margin:-1px 0 0 -1px;padding:var(--space-4)}
+.figure{font:800 44px/1 var(--font-heading);letter-spacing:-.02em;color:var(--color-brand-700)}
+.figure.warn{color:var(--color-accent)}
+.figure small{font-size:18px}
+.lbl{font-size:12px;margin-bottom:6px}
+.meter{height:10px;background:var(--color-neutral-200);margin:8px 0}
+.meter i{display:block;height:100%;background:var(--color-brand-700)}
+.meter.warn i{background:var(--color-accent)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:6px;padding:3px 9px;
+  font-family:var(--font-heading);font-weight:800;font-size:12px;
+  border:1px solid var(--color-divider);
+}
+.badge{
+  display:inline-flex;padding:2px 8px;font-family:var(--font-heading);font-weight:800;
+  font-size:12px;background:var(--color-accent);color:#fff;
+}
+.badge.b{background:var(--color-brand-700);color:var(--color-bg)}
+.badge.g{background:var(--color-grn);color:#fff}
+
+table{border-collapse:collapse;width:100%}
+th{
+  text-align:left;font-family:var(--font-heading);font-weight:800;font-size:12px;
+  letter-spacing:.04em;padding:8px 10px;border-bottom:2px solid var(--color-divider);
+}
+td{padding:9px 10px;border-bottom:1px solid var(--color-divider);vertical-align:top;font-size:13.5px}
+.scroll-x{overflow-x:auto;max-width:100%}
+.hr{height:2px;border:0;margin:var(--space-4) 0;background:var(--color-divider)}
+
+/* — forms — */
+.field{margin-bottom:var(--space-3)}
+.field>label{display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb,var(--color-text) 78%,transparent)}
+.input,select.input,textarea.input{
+  width:100%;min-height:36px;padding:7px 10px;font:inherit;font-size:14px;
+  color:var(--color-text);caret-color:var(--color-accent);background:var(--color-surface);
+  border:1px solid var(--color-divider);border-radius:var(--radius);
+}
+.row{display:flex;gap:var(--space-3);flex-wrap:wrap}
+.row>*{flex:1;min-width:180px}
+
+/* — toast — */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+  background:var(--color-brand-900);color:var(--color-brand-200);
+  padding:10px 16px;font-size:13.5px;z-index:90;display:flex;gap:9px;align-items:center;
+  border:2px solid var(--color-divider);
+}
+html[data-theme="dark"] .toast{background:var(--color-brand-200);color:var(--color-brand-900)}
+
+@media (max-width:900px){ .rail{width:62px} .rail .tx,.rail .rail-f,.rail .grp-h{display:none} }

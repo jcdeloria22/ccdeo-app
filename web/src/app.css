@@ -1,0 +1,488 @@
+/* ============================================================
+   What these screens add to the design system.
+
+   tokens.css is the CCDEO v0.6 system, copied unchanged. It already defines the
+   shell — .shell, .rail, .rail-brand, .rail-scroll, .rail-f, .grp-h, .navbtn,
+   main, .viewwrap, .view — plus .card, .btn, .chip, .cards, .figure, .meter,
+   .badge and the type scale. None of those are redefined here.
+
+   That is not a style preference. The first version of this file declared its own
+   .shell and .rail, which silently fought the system's rules of the same name and
+   produced a rail overlapping the content by 18px and a view shrink-wrapped to
+   721px inside a 1033px column. Anything below is either a new name or a named
+   modifier of an existing one.
+
+   Two rules from the system are load-bearing and are respected below:
+     --color-divider is 50% ink, not 34% — the 2px rules do all the organising.
+     Nothing an operator must read goes below 12px or 72% ink (.q).
+   ============================================================ */
+
+/*
+ * The one deliberate divergence from the system.
+ *
+ * It asks for Archivo with a Helvetica fallback. Archivo is not installed and
+ * this app has to work offline, so fetching a webfont is not an option — and an
+ * unresolved first choice means the fallback is what everyone sees anyway.
+ * Helvetica is named here as the intended face rather than left to happen by
+ * accident. Overridden rather than edited into tokens.css, so the system stays a
+ * copy of one source and this choice stays visible.
+ */
+:root,
+[data-theme='dark'] {
+  --font-heading: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
+  --font-body: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
+}
+
+/*
+ * The mount point has to carry the height chain.
+ *
+ * The design system's layout is a column of fixed height: `body` is 100% tall
+ * with `overflow: hidden`, `.shell` takes the remaining space, and `.viewwrap`
+ * is the one element that scrolls. That works when `.shell` is a direct child of
+ * `body`, which is how the standalone app is built.
+ *
+ * React mounts into `#root`, which sits in between. Unstyled it is a plain block
+ * with `flex: 0 1 auto` — it does not shrink, so `.shell`'s `flex: 1` had nothing
+ * to resolve against and grew to its content. At 1071px inside a 628px viewport
+ * `.viewwrap` never became scrollable and `body` clipped the rest: everything
+ * below the fold was unreachable, with no scrollbar anywhere.
+ *
+ * `#root` is this app's own id, not a name the system owns, so passing the chain
+ * through it is the right place to fix it.
+ */
+#root {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * Keep the scrollbar's space reserved.
+ *
+ * Some tabs overflow and some do not, so without this the content jumps sideways
+ * by the scrollbar's width every time you move between them. Scoped under #root
+ * rather than written as a rule for `.viewwrap`, which the design system owns.
+ */
+#root .viewwrap {
+  scrollbar-gutter: stable;
+}
+
+/* ---------- headings and small type ---------- */
+.h2 {
+  font-size: 19px;
+  margin: 32px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.note {
+  font-size: 13px;
+  margin: -6px 0 12px;
+}
+.back {
+  display: inline-block;
+  font-size: 13px;
+  margin-bottom: var(--space-3);
+  color: inherit;
+}
+
+/* Breathing room where a badge sits inside a heading. Spacing only — the system
+   owns the badge's shape and the heading's size. */
+.vhead h1 .badge,
+.h2 .badge { margin-left: 8px; vertical-align: 4px; }
+
+/* Tones for the system's .badge. The base rule supplies the shape. */
+.badge-overdue { background: var(--color-red); color: #fff; }
+.badge-warning { background: var(--color-accent); color: #fff; }
+
+/* ---------- toolbar ---------- */
+.bar {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+  margin: var(--space-6) 0 var(--space-4);
+}
+.bar-right {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ---------- reminder / slot / document rows ---------- */
+.remlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 2px solid var(--color-divider);
+}
+
+.rem {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+  background: var(--color-neutral-100);
+}
+.rem:last-child { border-bottom: 0; }
+
+/*
+ * Read items recede but stay legible — 72% ink is the floor in this system, and
+ * a reminder you have already seen is still a record you may need to read.
+ */
+.rem-read { background: transparent; }
+.rem-read .rem-title { font-weight: 400; }
+.rem-read .level { opacity: 0.55; }
+
+.rem-main { flex: 1; min-width: 0; }
+.rem-title { font-size: 15px; }
+.rem-title b { font-family: var(--font-heading); }
+.rem-reason { font-size: 13px; margin-top: 4px; }
+.rem-meta { font-size: 12px; margin-top: 6px; }
+.rem-act { flex-shrink: 0; }
+.read-mark { font-size: 12px; }
+
+/*
+ * Severity is a word, not only a colour. Colour alone fails anyone who cannot
+ * separate these hues, and this is the column that decides what gets attention
+ * first.
+ */
+.level {
+  flex-shrink: 0;
+  font: 700 11px/1.2 var(--font-heading);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  border: 2px solid;
+  min-width: 82px;
+  text-align: center;
+}
+.level-overdue { color: var(--color-red); border-color: var(--color-red); }
+.level-warning { color: var(--color-accent); border-color: var(--color-accent); }
+.level-signed { color: var(--color-grn); border-color: var(--color-grn); }
+.level-awaiting-approval { color: var(--color-accent); border-color: var(--color-accent); }
+.level-in-progress { color: var(--color-brand-700); border-color: var(--color-brand-700); }
+.level-waived,
+.level-empty { color: var(--color-neutral-600); border-color: var(--color-neutral-600); }
+.level-state {
+  color: var(--color-neutral-700);
+  border-color: var(--color-neutral-600);
+  min-width: 104px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ---------- contract rows ---------- */
+.plist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 2px solid var(--color-divider);
+}
+.prow {
+  padding: var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.prow:last-child { border-bottom: 0; }
+.prow-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+.prow-title { text-decoration: none; color: inherit; min-width: 0; }
+.prow-title:hover b { text-decoration: underline; }
+.prow-title b { font-family: var(--font-heading); }
+.prow-pct {
+  font: 800 22px/1 var(--font-heading);
+  color: var(--color-brand-700);
+  white-space: nowrap;
+}
+.prow-pct small { font-size: 13px; }
+.prow-meta { font-size: 12px; margin-top: 8px; }
+
+/* Approval debt is never folded into the readiness figure, so it never shares its colour. */
+.debt { color: var(--color-accent); font-weight: 700; }
+
+/* ---------- audit ---------- */
+.chain-ok { border-color: var(--color-grn); }
+.chain-ok b { color: var(--color-grn); }
+.chain-bad { border-color: var(--color-red); }
+.chain-bad b { color: var(--color-red); }
+.mono { word-break: break-all; font-size: 12px; }
+
+/* ---------- states ---------- */
+.state { padding: var(--space-6); }
+.state-bad { border-color: var(--color-red); padding: var(--space-4); }
+.state-bad b { color: var(--color-red); }
+
+/* ---------- narrow screens ---------- */
+/*
+ * Below 900px the rail becomes a strip across the top. A 250px column on a phone
+ * leaves nothing for the content it is meant to be navigating.
+ */
+@media (max-width: 900px) {
+  .shell { flex-direction: column; }
+  .rail {
+    width: auto;
+    flex-direction: row;
+    align-items: stretch;
+    border-right: 0;
+    border-bottom: 2px solid var(--color-divider);
+  }
+  /* The brand goes entirely, rather than being squeezed to a 30px sliver by
+     flex-shrink. On a phone every pixel of this strip should be navigation, and
+     the browser tab already carries the app's name. */
+  .rail-brand,
+  .rail-f,
+  .grp-h { display: none; }
+  .rail-scroll { display: flex; overflow-x: auto; overflow-y: hidden; }
+  .navbtn {
+    border-left: 0;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .navbtn[aria-current='page'] {
+    border-left-color: transparent;
+    border-bottom-color: var(--color-brand-700);
+  }
+  .viewwrap { padding: var(--space-4) var(--space-3); }
+}
+
+@media (max-width: 640px) {
+  /*
+   * Two across, not four down. At one column the summary filled the entire first
+   * screen and pushed every reminder below the fold, which inverts what the page
+   * is for: the figures describe the list, they are not the point of it.
+   */
+  .cards { grid-template-columns: 1fr 1fr; }
+  .cards > * { padding: var(--space-3); }
+  .figure { font-size: 30px; }
+
+  .rem { flex-wrap: wrap; gap: var(--space-3); }
+  .rem-act { width: 100%; }
+  .rem-act .btn { width: 100%; justify-content: center; }
+  .bar-right { margin-left: 0; width: 100%; }
+  .bar-right .btn { flex: 1; justify-content: center; }
+  .prow-head { flex-wrap: wrap; }
+}
+
+/*
+ * Actions that sit at their natural width.
+ *
+ * The system's `.row` stretches its children (`.row > * { flex: 1 }`), which is
+ * right for a group of equal drill buttons and wrong for one "New contract"
+ * button spanning the whole page. A new name rather than a redefinition of
+ * `.row`, which the system owns.
+ */
+.actions { display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; }
+.actions > * { flex: 0 0 auto; }
+
+/* ---------- explaining the screen ---------- */
+.explain { font-size: 13px; margin: -6px 0 18px; max-width: 68ch; }
+.hint { display: block; font-size: 12px; margin-bottom: 5px; }
+.busystep { font-size: 13px; margin: 8px 0; }
+.nextnote { font-size: 12px; margin: 0 0 8px; }
+
+/* A refusal is a rule being explained, so it is set to be read, not dismissed. */
+.problem {
+  border: 2px solid var(--color-red);
+  background: color-mix(in srgb, var(--color-red) 8%, transparent);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-3) 0;
+  font-size: 13.5px;
+  max-width: 72ch;
+}
+.problem b { display: block; color: var(--color-red); margin-bottom: 4px; }
+
+/* ---------- forms ---------- */
+.field { display: flex; flex-direction: column; margin-bottom: var(--space-4); max-width: 46ch; }
+.field label { font-size: 13px; font-weight: 700; font-family: var(--font-heading); margin-bottom: 3px; }
+.field input {
+  border: 2px solid var(--color-divider);
+  background: var(--color-bg);
+  padding: 9px 11px;
+  font-size: 14px;
+  min-height: 40px;
+}
+.field input:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 1px; }
+
+.panel {
+  border: 2px solid var(--color-accent);
+  background: var(--color-neutral-100);
+  padding: var(--space-4);
+  margin: var(--space-3) 0;
+}
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: 8px; }
+.panel-head b { font-family: var(--font-heading); font-size: 15px; }
+
+/* ---------- slots on a contract ---------- */
+.slotlist { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.slot { border: 2px solid var(--color-divider); background: var(--color-neutral-100); padding: var(--space-4); }
+.slot-head { display: flex; gap: var(--space-4); align-items: flex-start; }
+.slot-main { flex: 1; min-width: 0; }
+.slot-actions { margin-top: var(--space-3); }
+
+/* A file input styled as a button; the real control is hidden but still focusable. */
+.filebtn { position: relative; overflow: hidden; cursor: pointer; }
+.filebtn input[type='file'] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+
+/* ---------- a document, and where it has got to ---------- */
+.doccard { border: 2px solid var(--color-divider); background: var(--color-bg); padding: var(--space-4); margin-top: var(--space-3); }
+.doccard-head { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; align-items: baseline; }
+.doccard-head b { font-family: var(--font-heading); font-size: 15px; }
+.doccard-meta { font-size: 12px; margin: 8px 0 var(--space-3); }
+
+.track { list-style: none; display: flex; flex-wrap: wrap; gap: 0; margin: var(--space-3) 0; padding: 0; }
+.track-step {
+  font: 700 11px/1 var(--font-heading);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 7px 11px;
+  border: 2px solid var(--color-divider);
+  margin-left: -2px;
+  background: var(--color-bg);
+  color: var(--color-neutral-600);
+}
+.track-step:first-child { margin-left: 0; }
+.track-done { color: var(--color-grn); border-color: var(--color-grn); }
+.track-now { color: #fff; background: var(--color-brand-700); border-color: var(--color-brand-700); }
+.track-off { color: var(--color-red); border-color: var(--color-red); }
+.track-note { align-self: center; margin-left: 10px; font-size: 12px; }
+
+.next { margin-top: var(--space-3); }
+.whatnext { margin: var(--space-3) 0 0; padding-left: 18px; font-size: 12.5px; display: grid; gap: 4px; }
+
+/* ---------- document sets ---------- */
+.setcard { margin-top: var(--space-3); }
+.setnote { font-size: 12.5px; margin: 10px 0 0; max-width: 68ch; }
+.draftlist { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-2); }
+.draftrow { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+.draftrow input[type='text'],
+.draftrow > input {
+  border: 2px solid var(--color-divider);
+  background: var(--color-bg);
+  padding: 7px 9px;
+  font-size: 13px;
+  min-height: 36px;
+  flex: 1 1 140px;
+  min-width: 0;
+}
+.draftrow .req { display: flex; align-items: center; gap: 6px; font-size: 12.5px; white-space: nowrap; }
+.draftrow .req input { flex: none; min-height: 0; }
+
+@media (max-width: 640px) {
+  .draftrow > input { flex-basis: 100%; }
+  .track { gap: 2px; }
+  .track-step { margin-left: 0; }
+}
+
+/* ---------- the Builder ---------- */
+.field textarea,
+.field select {
+  border: 2px solid var(--color-divider);
+  background: var(--color-bg);
+  padding: 9px 11px;
+  font-size: 14px;
+  min-height: 40px;
+  font-family: inherit;
+}
+.field textarea { min-height: 90px; resize: vertical; }
+.field select { max-width: 46ch; }
+
+.buildlog {
+  border: 2px solid var(--color-divider);
+  background: var(--color-neutral-100);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* ---------- Builder: letters and setup ---------- */
+.daterow { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+.daterow .field { flex: 1 1 200px; max-width: 280px; }
+
+.holidays { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.holidays li {
+  display: flex; align-items: center; gap: var(--space-2);
+  border: 2px solid var(--color-divider); padding: 4px 6px 4px 10px;
+  font-family: var(--font-mono); font-size: 12.5px;
+}
+
+/* ---------- the reviewers ---------- */
+.quizbar { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+.qtext { font-size: 19px; margin: 0 0 var(--space-4); line-height: 1.45; text-wrap: balance; }
+.qopts { display: grid; gap: var(--space-2); }
+
+/* Right and wrong are named in the feedback as well as coloured — the colour
+   alone would carry it for most people and for nobody else. */
+.opt-right { border-color: var(--color-grn); color: var(--color-grn); }
+.opt-wrong { border-color: var(--color-red); color: var(--color-red); }
+
+.feedback { margin-top: var(--space-4); }
+.feedback p { margin: 8px 0 0; font-size: 14px; }
+.feedback-right { border-color: var(--color-grn); }
+.feedback-right > b { color: var(--color-grn); }
+.feedback-wrong { border-color: var(--color-red); }
+.feedback-wrong > b { color: var(--color-red); }
+.srcline { font-size: 11.5px; margin-top: 8px; }
+
+.mastery { margin-bottom: var(--space-3); }
+.mastery:last-child { margin-bottom: 0; }
+.mastery-head { display: flex; justify-content: space-between; gap: var(--space-3); font-size: 13px; margin-bottom: 4px; }
+
+.lastrun { margin-bottom: var(--space-4); }
+.resetnote { align-self: center; font-size: 12px; }
+
+/* ------------------------------------------------------------- workflow --- */
+
+/* A row of section buttons. Not `.rail` — that is the shell's own navigation,
+   and reusing its name here would put two owners on one selector. */
+.tabbar { display: flex; flex-wrap: wrap; gap: 0; margin-bottom: var(--space-4); }
+.tabbar .btn { flex: 0 0 auto; }
+
+.flowintro { margin: 0; font-size: 13.5px; line-height: 1.55; }
+
+.legend { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-3); }
+.legend > span { display: flex; align-items: center; gap: 7px; font-size: 12.5px; }
+.legend i { width: 12px; height: 12px; flex: 0 0 auto; display: inline-block; }
+
+/* The left rule carries the role colour from the flow's own legend, so the key
+   above the phases and the steps below it cannot disagree. */
+.step { border-left: 3px solid var(--color-brand-700); padding: 9px 0 9px 12px; margin-top: var(--space-3); }
+
+.stepbtn {
+  display: flex; width: 100%; gap: var(--space-3); align-items: flex-start;
+  background: none; border: 0; padding: 0; text-align: left; cursor: pointer;
+  color: inherit; font: inherit;
+}
+.stepbtn > span:first-child { flex: 1; }
+.stepbtn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.steprole { display: block; font-weight: 600; font-size: 12.5px; margin-top: 2px; }
+
+.stepbody { margin-top: 9px; font-size: 13.5px; }
+.stepbody > p { margin: 0; line-height: 1.55; }
+.steppair { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-3); font-size: 12.5px; }
+.steppair .lbl { display: block; margin-bottom: 2px; }
+
+.worthknowing { margin-top: var(--space-3); border-color: var(--color-accent); }
+.worthknowing > b { color: var(--color-accent); font-size: 12.5px; }
+.worthknowing > p { margin: 6px 0 0; font-size: 13px; }
+
+.reflist { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-3); }
+
+/* A reviewed day is outlined, not only ticked — the tick is small and the card
+   is what the eye actually scans down. */
+.day-done { border-color: var(--color-grn); }
+.daytick { display: flex; align-items: center; gap: 9px; cursor: pointer; }
+.daytick input { cursor: pointer; }
+
+.filters { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; margin-top: var(--space-3); }
+.filters .field { flex: 1 1 180px; max-width: 240px; margin: 0; }

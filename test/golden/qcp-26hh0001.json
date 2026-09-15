@@ -1,0 +1,246 @@
+{
+  "artifact": {
+    "title": "Quality Control Program — 26HH0001",
+    "project": {
+      "contractId": "26HH0001",
+      "name": "Rehabilitation of Barangay Road, Section 1",
+      "location": "Cebu, Region VII",
+      "implementingOffice": "DPWH Cebu 1st District Engineering Office"
+    },
+    "preparedOn": "2026-09-15",
+    "preparedBy": "Jayz, Materials Engineer I",
+    "rulesVersion": "mtr-vol-ii-2012ed-2016-12",
+    "mode": "real",
+    "simulation": null,
+    "sections": [
+      {
+        "itemNumber": "200",
+        "description": "Aggregate subbase course",
+        "quantity": 1250,
+        "unit": "cu.m",
+        "tests": [
+          {
+            "test": "Grading and plasticity",
+            "frequency": "1 per 300 m³ per source",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 200 — aggregate subbase course (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": "Grading per Table 200.1 (50 mm = 100; 25 mm = 55–85; 9.5 mm = 40–75; 0.075 mm = 0–12). Fraction passing 0.075 mm not greater than 0.66 of the fraction passing 0.425 mm. Fraction passing 0.425 mm: liquid limit not greater than 35, plasticity index not greater than 12 (AASHTO T 89 / T 90).",
+            "acceptanceCitation": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II §200.2, Table 200.1 (2013, tier 1) — countersigned by Jayz on 2026-09-15; read from the 2013 edition held in the vault",
+            "minimumSamples": 5,
+            "basis": "1 per 300 m3",
+            "withheld": null
+          },
+          {
+            "test": "CBR and abrasion",
+            "frequency": "1 per 3,000 m³",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 200 — aggregate subbase course (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": "Soaked CBR not less than 30% (AASHTO T 193), obtained at the maximum dry density determined by AASHTO T 180 Method D. Coarse portion retained on 2.00 mm: mass percent of wear not exceeding 50 (AASHTO T 96).",
+            "acceptanceCitation": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II §200.2 (2013, tier 1) — countersigned by Jayz on 2026-09-15; read from the 2013 edition held in the vault",
+            "minimumSamples": 1,
+            "basis": "1 per 3000 m3",
+            "withheld": null
+          },
+          {
+            "test": "Field density (compaction)",
+            "frequency": "1 per 1,500 m³",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 200 — aggregate subbase course (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": "Field density at least 100% of the maximum dry density determined by AASHTO T 180 Method D; in-place density determined by AASHTO T 191. Layers of more than 150 mm required thickness compacted in two or more layers, no compacted layer exceeding 150 mm.",
+            "acceptanceCitation": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II §200.3.3 (2013, tier 1) — countersigned by Jayz on 2026-09-15; read from the 2013 edition held in the vault",
+            "minimumSamples": 1,
+            "basis": "1 per 1500 m3",
+            "withheld": null
+          }
+        ]
+      },
+      {
+        "itemNumber": "201",
+        "description": "Aggregate base course",
+        "quantity": 900,
+        "unit": "m³",
+        "tests": [
+          {
+            "test": "Grading and plasticity",
+            "frequency": "1 per 300 m³ per source",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 201 — aggregate base course (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": "Grading per Table 201.1 (Grading A or B, whichever the Bill of Quantities calls for). Fraction passing 0.075 mm not greater than 0.66 of the fraction passing 0.425 mm. Fraction passing 0.425 mm: liquid limit not greater than 25, plasticity index not greater than 6 (AASHTO T 89 / T 90).",
+            "acceptanceCitation": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II §201.2, Table 201.1 (2013, tier 1) — countersigned by Jayz on 2026-09-15; read from the 2013 edition held in the vault",
+            "minimumSamples": 3,
+            "basis": "1 per 300 m3",
+            "withheld": null
+          },
+          {
+            "test": "CBR and abrasion",
+            "frequency": "1 per 3,000 m³",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 201 — aggregate base course (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": "Material passing the 19 mm sieve: soaked CBR not less than 80% (AASHTO T 193), at maximum dry density by AASHTO T 180 Method D. Coarse portion retained on 2.00 mm: mass percent of wear not exceeding 50 (AASHTO T 96).",
+            "acceptanceCitation": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II §201.2 (2013, tier 1) — countersigned by Jayz on 2026-09-15; read from the 2013 edition held in the vault",
+            "minimumSamples": 1,
+            "basis": "1 per 3000 m3",
+            "withheld": null
+          },
+          {
+            "test": "Field density (compaction)",
+            "frequency": "1 per 1,500 m³",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 201 — aggregate base course (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": "Field density at least 100% of the maximum dry density determined by AASHTO T 180 Method D (Item 201 construction requirements follow Subsection 200.3.3).",
+            "acceptanceCitation": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II §201.3.3 via §200.3.3 (2013, tier 1) — countersigned by Jayz on 2026-09-15; read from the 2013 edition held in the vault",
+            "minimumSamples": 1,
+            "basis": "1 per 1500 m3",
+            "withheld": null
+          }
+        ]
+      },
+      {
+        "itemNumber": "311",
+        "description": "PCCP, 200 mm thick",
+        "quantity": 3400,
+        "unit": "sq.m",
+        "tests": [
+          {
+            "test": "Cement",
+            "frequency": "1 per 2,000 bags per shipment",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 311 — Portland cement concrete pavement (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": null,
+            "acceptanceCitation": null,
+            "minimumSamples": null,
+            "basis": "per bag",
+            "withheld": null
+          },
+          {
+            "test": "Fine aggregate and water",
+            "frequency": "1 per 75 m³",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 311 — Portland cement concrete pavement (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": null,
+            "acceptanceCitation": null,
+            "minimumSamples": null,
+            "basis": "per m3",
+            "withheld": null
+          },
+          {
+            "test": "Flexural beam samples",
+            "frequency": "1 set (3 beams) per 270 m² at 280 mm depth, or per 250 m² at 300 mm depth; maximum 75 m³ per set",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 311 — Portland cement concrete pavement (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": null,
+            "acceptanceCitation": null,
+            "minimumSamples": null,
+            "basis": "as stated",
+            "withheld": null
+          },
+          {
+            "test": "Reinforcing steel",
+            "frequency": "1 per 10,000 kg of each size from each source",
+            "citation": "DPWH Minimum Testing Requirements (MTR) Vol II Item 311 — Portland cement concrete pavement (2016, tier 2) — keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+            "acceptance": null,
+            "acceptanceCitation": null,
+            "minimumSamples": null,
+            "basis": "per kg",
+            "withheld": null
+          }
+        ]
+      }
+    ],
+    "notices": [
+      "Frequencies are contractor quality-control frequencies. DPWH quality-assurance testing is separate and less frequent.",
+      "Some rules are drawn from a source keyed to the 2012 edition of the Standard Specifications. Re-check against a current Volume II before relying on them."
+    ]
+  },
+  "warnings": [
+    "Item 311 is measured in \"sq.m\" but \"Cement\" is specified per bag. The frequency is shown as written; the sample count needs a conversion this generator will not guess.",
+    "Item 311 is measured in \"sq.m\" but \"Fine aggregate and water\" is specified per m3. The frequency is shown as written; the sample count needs a conversion this generator will not guess.",
+    "Item 311 is measured in \"sq.m\" but \"Reinforcing steel\" is specified per kg. The frequency is shown as written; the sample count needs a conversion this generator will not guess."
+  ],
+  "provenance": [
+    {
+      "sourceDocument": "DPWH Minimum Testing Requirements (MTR) Vol II",
+      "sourceYear": 2016,
+      "tier": 2,
+      "verifiedBy": "Jayz",
+      "verifiedOn": "2026-08-25",
+      "caveat": "keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+      "sourceSection": "Item 200 — aggregate subbase course"
+    },
+    {
+      "sourceDocument": "DPWH Minimum Testing Requirements (MTR) Vol II",
+      "sourceYear": 2016,
+      "tier": 2,
+      "verifiedBy": "Jayz",
+      "verifiedOn": "2026-08-25",
+      "caveat": "keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+      "sourceSection": "Item 201 — aggregate base course"
+    },
+    {
+      "sourceDocument": "DPWH Minimum Testing Requirements (MTR) Vol II",
+      "sourceYear": 2016,
+      "tier": 2,
+      "verifiedBy": "Jayz",
+      "verifiedOn": "2026-08-25",
+      "caveat": "keyed to the 2012 edition of the Standard Specifications; re-check against a current Volume II",
+      "sourceSection": "Item 311 — Portland cement concrete pavement"
+    },
+    {
+      "sourceDocument": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II",
+      "sourceSection": "§200.2",
+      "sourceYear": 2013,
+      "tier": 1,
+      "verifiedBy": "extracted-from-source-pdf",
+      "verifiedOn": "2026-09-15",
+      "countersignedBy": "Jayz",
+      "countersignedOn": "2026-09-15",
+      "caveat": "read from the 2013 edition held in the vault"
+    },
+    {
+      "sourceDocument": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II",
+      "sourceSection": "§200.2, Table 200.1",
+      "sourceYear": 2013,
+      "tier": 1,
+      "verifiedBy": "extracted-from-source-pdf",
+      "verifiedOn": "2026-09-15",
+      "countersignedBy": "Jayz",
+      "countersignedOn": "2026-09-15",
+      "caveat": "read from the 2013 edition held in the vault"
+    },
+    {
+      "sourceDocument": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II",
+      "sourceSection": "§200.3.3",
+      "sourceYear": 2013,
+      "tier": 1,
+      "verifiedBy": "extracted-from-source-pdf",
+      "verifiedOn": "2026-09-15",
+      "countersignedBy": "Jayz",
+      "countersignedOn": "2026-09-15",
+      "caveat": "read from the 2013 edition held in the vault"
+    },
+    {
+      "sourceDocument": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II",
+      "sourceSection": "§201.2",
+      "sourceYear": 2013,
+      "tier": 1,
+      "verifiedBy": "extracted-from-source-pdf",
+      "verifiedOn": "2026-09-15",
+      "countersignedBy": "Jayz",
+      "countersignedOn": "2026-09-15",
+      "caveat": "read from the 2013 edition held in the vault"
+    },
+    {
+      "sourceDocument": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II",
+      "sourceSection": "§201.2, Table 201.1",
+      "sourceYear": 2013,
+      "tier": 1,
+      "verifiedBy": "extracted-from-source-pdf",
+      "verifiedOn": "2026-09-15",
+      "countersignedBy": "Jayz",
+      "countersignedOn": "2026-09-15",
+      "caveat": "read from the 2013 edition held in the vault"
+    },
+    {
+      "sourceDocument": "DPWH Standard Specifications for Highways, Bridges and Airports, Volume II",
+      "sourceSection": "§201.3.3 via §200.3.3",
+      "sourceYear": 2013,
+      "tier": 1,
+      "verifiedBy": "extracted-from-source-pdf",
+      "verifiedOn": "2026-09-15",
+      "countersignedBy": "Jayz",
+      "countersignedOn": "2026-09-15",
+      "caveat": "read from the 2013 edition held in the vault"
+    }
+  ]
+}

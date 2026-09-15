@@ -1,0 +1,28 @@
+{
+  "sourceProject": "../CCDEO-App",
+  "copiedOn": "2026-09-15",
+  "note": "Byte-identical copies. Do not edit them here — edit the source and re-run `npm run sync:vendored`. Anything specific to this app belongs in its own file.",
+  "files": {
+    "web/src/tokens.css": "66b73eb8859294754fd910fbf6935fcb3578eefd09e43806d6652ea9f1983f55",
+    "web/public/builder/rules.js": "3e992c8e0a0efe0c407038f2ca5db748ac70eb856f622d99ec08e72e2e69ef5e",
+    "web/public/builder/builders.js": "cec15e8261e9047bb1ab3d3399828a495d6c943238e34ed0db936b83f4a5b48e",
+    "web/public/builder/letters.js": "307ee43eb3341cf7567f62325cb2bcb1f9b463cd9a41f242b02459cc948140db",
+    "web/public/builder/docxkit.js": "14ec1f5c7204ed46c54481d24f9582f72aa13597298bd11e4f84dec766a54763",
+    "web/public/builder/extract.js": "fde723f0d7d8d8e4469bb41759bb75f7c327dde2f593afdb5bbff5030cf9050c",
+    "web/public/builder/builder-core.js": "035c7a385457c8dbd8bacf872361fc4aba9169042a02871b663eb314706ad8fd",
+    "web/public/builder/seed-templates.js": "7c2e59af2d40a0eb3ad64f4fbccb8856ca88391b29275023c14a693793553458",
+    "web/public/data/me-questions.js": "b1bcab6a56573d5538f28a92df4a8b3ed88de4324d00f5c6a7d79218878ca737",
+    "web/public/data/me-recall.js": "1e4bb77e80c2bd378d86cecd257f1fb17aabbc0d75f1e8c589b02b0178f220e1",
+    "web/public/data/pe-questions.js": "eb795c23180dd18d358cc98cedb92917b913e2f4c2412f7c888dca7f1ae83615",
+    "web/public/data/inventory.js": "93ca817185cc91ab4e8765dd850c16e50a65ec7d71da237d6dff5355abdae9bf",
+    "web/public/data/workflow-data.js": "7a8ea64de2dea89dfc913bd8725e557f83ddcf093185199cfc799b1dc6854681",
+    "web/public/vendor/jszip.js": "f12f367798e35ee2d9993dba6167fc61ddb52fb89880f5a99fbb606335188410",
+    "web/public/vendor/pdf.min.js": "5b5799e6f8c680663207ac5b42ee14eed2a406fa7af48f50c154f0c0b1566946",
+    "web/public/vendor/pdf.worker.min.js": "feabdf309770ed24bba31a5467836cdc8cf639c705af27d52b585b041bb8527b",
+    "web/public/vendor/xlsx.full.min.js": "c9506197caf809a075b6dee1da0d36fb19da7158ffe8a88e7b0c96c5d8623c99",
+    "web/public/vendor/tesseract.min.js": "be397e903f26199d428b528e8d834cdca8064f95c82068fa34ec8c4d34fd9de9",
+    "ocr-assets/worker.min.js": "2bcc88efb897e6a39517a05325b95e15a59e2bae1c74dee3deafb5a56aef846f",
+    "ocr-assets/tesseract-core-simd-lstm.wasm.js": "18797eef96bab787636c40b53efaa445cf5ca1c97abd735c4fd8dc3d03652959",
+    "ocr-assets/eng.traineddata.gz": "ed350f3752f81ee8f38769edc14d92d997dababe23b565c59879372cc46a2468"
+  }
+}
