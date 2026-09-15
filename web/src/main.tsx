@@ -7,7 +7,7 @@
  */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import Shell from './Shell';
+import Session from './Session';
 import './tokens.css';
 import './app.css';
 
@@ -20,6 +20,6 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
 
 createRoot(el).render(
   <StrictMode>
-    <Shell />
+    <Session />
   </StrictMode>,
 );

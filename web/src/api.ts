@@ -43,11 +43,28 @@ export class ApiError extends Error {
   constructor(
     readonly status: number,
     message: string,
+    /**
+     * The server's machine-readable code, where it sends one.
+     *
+     * Only `password_change_required` so far. The screen has to route on it —
+     * matching the prose of a message would break the moment the wording is
+     * improved.
+     */
+    readonly code?: string,
   ) {
     super(message);
     this.name = 'ApiError';
   }
 }
+
+/**
+ * Announced when the server says the caller is not signed in.
+ *
+ * A session can expire while a screen is open, and every view would otherwise
+ * have to know how to recover. Instead the session gate listens for this and
+ * re-checks once; views keep showing their own error and are replaced.
+ */
+export const AUTH_EXPIRED = 'dpwh:auth-expired';
 
 /**
  * One fetch wrapper, so every call fails the same way.
@@ -66,13 +83,26 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     let detail = res.statusText;
+    let code: string | undefined;
     try {
-      const body = (await res.json()) as { message?: string | string[] };
+      const body = (await res.json()) as { message?: string | string[]; code?: string };
       if (body.message) detail = Array.isArray(body.message) ? body.message.join('; ') : body.message;
+      code = body.code;
     } catch {
       /* not JSON; the status text will do */
     }
-    throw new ApiError(res.status, detail);
+
+    /*
+     * A 401 anywhere means the session is gone — expired, revoked, or never
+     * there. Said once, here, rather than handled in every view. `/auth/me` is
+     * excluded because the gate calls it precisely to find out, and it would
+     * otherwise announce the thing it was asking about.
+     */
+    if (res.status === 401 && !path.startsWith('/auth/')) {
+      window.dispatchEvent(new CustomEvent(AUTH_EXPIRED));
+    }
+
+    throw new ApiError(res.status, detail, code);
   }
 
   return (await res.json()) as T;
@@ -441,6 +471,46 @@ export type StudyRecord = 'me' | 'pe' | 'workflow';
  * show the verified record beside them — not to write the same specification
  * value into a second place.
  */
+export type AuthMode = 'none' | 'password';
+
+export interface SignedInUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export interface WhoAmI {
+  user: SignedInUser;
+  mustChangePassword: boolean;
+  authMode: AuthMode;
+}
+
+/**
+ * Signing in and out.
+ *
+ * `mode` is the only call made before anything is known — it says whether this
+ * build uses passwords at all, so a loopback single-operator build never renders
+ * a login screen it has no accounts for.
+ */
+export const authApi = {
+  mode: (): Promise<{ authMode: AuthMode }> => call('/auth/mode'),
+
+  me: (): Promise<WhoAmI> => call('/auth/me'),
+
+  login: (email: string, password: string): Promise<{ user: SignedInUser; mustChangePassword: boolean }> =>
+    call('/auth/login', { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ email, password }) }),
+
+  logout: (): Promise<{ ok: true }> => call('/auth/logout', { method: 'POST' }),
+
+  changePassword: (currentPassword: string, newPassword: string): Promise<{ ok: true }> =>
+    call('/auth/change-password', {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify({ currentPassword, newPassword }),
+    }),
+};
+
 export const qcpApi = {
   rules: (): Promise<QcpRules> => call('/generators/qcp/rules'),
 };

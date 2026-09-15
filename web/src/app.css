@@ -486,3 +486,45 @@
 
 .filters { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; margin-top: var(--space-3); }
 .filters .field { flex: 1 1 180px; max-width: 240px; margin: 0; }
+
+/* ---------------------------------------------------------- signing in --- */
+
+/* The sign-in screen replaces the shell rather than sitting inside it: there is
+   no navigation to offer someone who is not signed in. */
+.signin {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: var(--color-bg);
+}
+
+.signin-card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.signin-card h1 { margin: 0; font-size: 22px; }
+.signin-card .field { margin: 0; }
+
+.signin-brand { display: flex; align-items: center; gap: var(--space-3); }
+.signin-brand p { margin: 2px 0 0; font-size: 12.5px; }
+
+.signin-intro { margin: 0; font-size: 13px; line-height: 1.5; }
+.signin-note { margin: 0; font-size: 12px; line-height: 1.5; }
+.signin-hint { margin: -4px 0 0; font-size: 12px; }
+
+.signin-error {
+  margin: 0;
+  border-color: var(--color-red);
+  color: var(--color-red);
+  font-size: 13px;
+}
+
+/* Who you are, in the rail's footer. */
+.rail-f .who { display: block; font-size: 11.5px; margin-top: 2px; }
+.rail-f .signout { margin-top: var(--space-3); }

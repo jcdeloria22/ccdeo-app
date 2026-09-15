@@ -17,7 +17,7 @@
  * survives a reload and can be linked to, which is all that was needed.
  */
 import { useCallback, useEffect, useState } from 'react';
-import { api } from './api';
+import { api, type SignedInUser } from './api';
 import Reminders from './views/Reminders';
 import Readiness from './views/Readiness';
 import Register from './views/Register';
@@ -65,7 +65,17 @@ function parseHash(hash: string): { tab: TabKey; projectId: string | null } {
   return { tab, projectId: tab === 'register' && parts[1] ? parts[1] : null };
 }
 
-export default function Shell() {
+/**
+ * `user` is absent on a single-operator build, where there is nobody to name and
+ * nothing to sign out of. The rail says which arrangement is in force either way
+ * — "who am I acting as" is not a question this app should leave unanswered.
+ */
+export interface ShellProps {
+  user?: SignedInUser;
+  onSignOut?: () => void;
+}
+
+export default function Shell({ user, onSignOut }: ShellProps = {}) {
   const [route, setRoute] = useState(() => parseHash(window.location.hash));
   const [unread, setUnread] = useState(0);
 
@@ -132,8 +142,23 @@ export default function Shell() {
         </div>
 
         <div className="rail-f">
-          <b>Single operator</b>
-          Auth is off, so the server refuses to bind anything but loopback.
+          {user ? (
+            <>
+              <b>{user.name}</b>
+              <span className="who q">{user.email}</span>
+              <span className="who q">acting as {user.role.replace(/_/g, ' ')}</span>
+              {onSignOut && (
+                <button className="btn btn-secondary btn-block signout" onClick={onSignOut}>
+                  Sign out
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <b>Single operator</b>
+              Auth is off, so the server refuses to bind anything but loopback.
+            </>
+          )}
         </div>
       </nav>
 
