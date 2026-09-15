@@ -25,6 +25,7 @@ import { LifecycleController } from '../src/lifecycle/lifecycle.controller';
 import { SettingsController } from '../src/settings/settings.controller';
 import { QuizController } from '../src/reviewer/quiz.controller';
 import { QcpRulesController } from '../src/generators/qcp/qcp-rules.controller';
+import { AuthController } from '../src/auth/auth.controller';
 import { CAPABILITY_KEY, PUBLIC_KEY } from '../src/policy/policy.guard';
 import { CAPABILITIES, INTENDED, ROLES, resolve, type Capability, type Role } from '../src/policy/roles';
 
@@ -44,6 +45,7 @@ const CONTROLLERS: ReadonlyArray<[string, Ctor]> = [
   ['SettingsController', SettingsController],
   ['QuizController', QuizController],
   ['QcpRulesController', QcpRulesController],
+  ['AuthController', AuthController],
 ];
 
 /**
@@ -122,21 +124,53 @@ describe('every route', () => {
   }
 
   /**
-   * Exactly one public handler, and it is the development blob store.
+   * Public handlers are listed here, each with the reason it may be reached
+   * without an actor. Any OTHER public route is an unguarded hole, so the exact
+   * set is asserted — adding one has to be a deliberate edit to this list.
    *
-   * A presigned URL carries its own authority — that is what presigned means — so
-   * the browser PUTs to it without the app's credentials. The authority there is
-   * the content hash: the key names the bytes, bytes that do not hash to it are
-   * refused, and the handler answers 404 unless storage is the local filesystem.
-   * Any OTHER public route would be an unguarded hole, so the count is asserted.
+   *  - `DevStorageController.put` — a presigned URL carries its own authority,
+   *    which is what presigned means. The authority is the content hash: the key
+   *    names the bytes, bytes that do not hash to it are refused, and the handler
+   *    answers 404 unless storage is the local filesystem.
+   *
+   *  - `AuthController.mode` — says whether this build uses passwords at all, so
+   *    the screen knows what to render before anyone has signed in. It reveals
+   *    one boolean about the configuration and nothing about who exists.
+   *
+   *  - `AuthController.login` — the way in. It cannot require an actor, because
+   *    establishing one is its whole purpose. It is throttled per account and
+   *    answers every failure identically.
+   *
+   *  - `AuthController.logout` — public so that a caller whose session has already
+   *    expired can still be rid of the cookie. Requiring a valid session to sign
+   *    out would leave a stale cookie in the browser of the person most likely to
+   *    want it gone.
    */
-  it('is public in exactly one place, for a reason that is written down', () => {
+  it('is public only where it is written down, and nowhere else', () => {
     const publics = CONTROLLERS.flatMap(([name, C]) =>
       handlersOf(C)
         .filter((h) => isPublic(C, h))
         .map((h) => `${name}.${h}`),
     );
-    expect(publics).toEqual(['DevStorageController.put']);
+    expect(publics.sort()).toEqual(
+      ['AuthController.login', 'AuthController.logout', 'AuthController.mode', 'DevStorageController.put'].sort(),
+    );
+  });
+
+  /**
+   * Nothing that changes a document may be public, whatever else is added. The
+   * list above is maintained by hand; this holds even if someone forgets.
+   */
+  it('never makes a write route public', () => {
+    for (const [name, C] of CONTROLLERS) {
+      for (const h of handlersOf(C)) {
+        if (!isPublic(C, h)) continue;
+        expect(
+          ['DevStorageController', 'AuthController'].includes(name),
+          `${name}.${h} is public but is not an auth or presigned-storage route`,
+        ).toBe(true);
+      }
+    }
   });
 
   /** Reads and writes use capabilities of the matching kind. */

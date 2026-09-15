@@ -51,6 +51,10 @@ export const STATUS_BY_ERROR: Readonly<Record<string, HttpStatus>> = {
   NoActiveTemplateError: HttpStatus.UNPROCESSABLE_ENTITY,
   UnknownSettingError: HttpStatus.NOT_FOUND,
   UnknownBankError: HttpStatus.NOT_FOUND,
+  UnknownUserError: HttpStatus.NOT_FOUND,
+  UnknownRoleError: HttpStatus.UNPROCESSABLE_ENTITY,
+  DuplicateUserError: HttpStatus.CONFLICT,
+  WeakPasswordError: HttpStatus.UNPROCESSABLE_ENTITY,
   UnverifiedRuleError: HttpStatus.UNPROCESSABLE_ENTITY,
 
   // the request is missing something

@@ -26,6 +26,8 @@ import { AgeingRepository } from '../ageing/ageing.repository';
 import { InboxRepository } from '../reminders/inbox.repository';
 import { SettingsRepository } from '../settings/settings.repository';
 import { QuizProgressRepository } from '../reviewer/quiz-progress.repository';
+import { UsersRepository } from '../auth/users.repository';
+import { SessionsRepository } from '../auth/sessions.repository';
 import { UploadsRepository } from '../uploads/uploads.repository';
 import { STORAGE } from '../storage/storage.token';
 import { SCANNER } from '../scan/scanner.token';
@@ -55,6 +57,8 @@ const fromPool = <T>(Ctor: new (p: Pool) => T) => ({
     fromPool(InboxRepository),
     fromPool(SettingsRepository),
     fromPool(QuizProgressRepository),
+    fromPool(UsersRepository),
+    fromPool(SessionsRepository),
 
     /*
      * The two seams, bound once.
@@ -92,6 +96,8 @@ const fromPool = <T>(Ctor: new (p: Pool) => T) => ({
     InboxRepository,
     SettingsRepository,
     QuizProgressRepository,
+    UsersRepository,
+    SessionsRepository,
     UploadsRepository,
     STORAGE,
     SCANNER,

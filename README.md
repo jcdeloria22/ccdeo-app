@@ -110,7 +110,7 @@ that to make the browser happy.
 | **DC-10** ageing panel and reminder engine | **done**, SLAs confirmed |
 | ***then*** the first QCP generator | **done**, every rule verified |
 
-552 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
+622 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
 installed and its signature database is loaded, so the real-scanner tests run.
 
 **Consolidating into this project**, decided 15 September 2026: the Document
@@ -230,6 +230,51 @@ uploaded documents, the Builder's saved signatories and the audit trail.
 `_test`** — `test/test-database.ts` aborts the run otherwise, because a suite that
 truncates must not be one typo away from deleting the data it protects. That guard
 has its own tests in `test/test-database.spec.ts`.
+
+## Authentication
+
+`AUTH_MODE=none` makes every request the seeded operator. That is safe on
+loopback and catastrophic anywhere else, so `src/config/bind-guard.ts` refuses to
+listen on any address but `127.0.0.1` while it is on. **`AUTH_MODE=password` is
+what lets the server bind `0.0.0.0`**, which is what any container platform
+requires — the ordering is deliberate, not an obstacle.
+
+Passwords are hashed with **scrypt from Node's own crypto**: memory-hard, in the
+standard library, and needing no native build on an image we do not control. The
+stored value carries the parameters it was made with (`scrypt$N$r$p$salt$hash`),
+so the cost can be raised later without invalidating anyone's password —
+`needsRehash` reports which are behind and a successful login quietly upgrades
+them.
+
+Sessions are **server-side**, not self-contained tokens. A JWT cannot be revoked
+before it expires, and an administrator here has to be able to end access
+immediately. The cookie holds 32 random bytes; only its SHA-256 is stored, so a
+leaked database yields no live sessions. `HttpOnly`, `SameSite=Lax`, `Secure`
+(refused off in production), 12-hour lifetime and a 2-hour idle timeout.
+
+Three decisions worth knowing:
+
+- **Every failed sign-in answers identically.** Wrong password, no such account,
+  disabled, locked — one message, one status, and the same work done either way,
+  including hashing against a dummy when no account matched. A login page that
+  distinguishes them is a tool for finding out which addresses are real.
+- **Failed attempts are not audited.** The trail is append-only and hash-chained;
+  an unauthenticated endpoint that appended to it would let anyone on the internet
+  inflate the evidentiary record. Failures are counted on the account, which is
+  where the defence is — ten wrong passwords locks it for fifteen minutes.
+- **An issued password buys one thing: the chance to replace it.** An admin who
+  creates an account knows the credential, so the account can sign in and change
+  it and do nothing else until it does. Otherwise the audit trail could name a
+  person who was not there.
+
+Create the first account from the command line. The password is generated and
+printed once, never stored elsewhere and never taken from an environment
+variable by default — a password in the platform's dashboard is a password in its
+logs:
+
+```bash
+npm run user:create -- --email you@dpwh.gov.ph --name "Your Name" --role admin
+```
 
 ## Storage and the scan gate
 

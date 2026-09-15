@@ -40,6 +40,36 @@ const schema = z.object({
    * replaced by that binding, not joined by it.
    */
   STORAGE_DIR: z.string().min(1).optional(),
+
+  /**
+   * Whether the session cookie is marked `Secure`.
+   *
+   * Defaults on in production, because a session cookie that can travel over
+   * plain HTTP is a session that can be stolen in transit. It is a setting only
+   * so that a local build over http://127.0.0.1 can still sign in; anywhere the
+   * app is reachable by others this must stay on.
+   */
+  SESSION_COOKIE_SECURE: z
+    .enum(['true', 'false'])
+    .optional()
+    // Unset stays undefined rather than collapsing to false, so "secure unless
+    // told otherwise" can still apply. Transforming undefined to false here made
+    // the production default unreachable and shipped a cookie without Secure.
+    .transform((v) => (v === undefined ? undefined : v === 'true')),
+
+  /**
+   * Trust `X-Forwarded-For` and `X-Forwarded-Proto`.
+   *
+   * Required behind Railway's router, and dangerous anywhere else: a client can
+   * set those headers itself, so trusting them without a proxy in front lets
+   * anyone claim any address. Off unless said otherwise.
+   */
+  TRUST_PROXY: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => v === 'true'),
+  // ^ unset means false, which is the safe default here: trusting forwarded
+  // headers with no proxy in front lets a client claim any address.
 });
 
 export type Env = z.infer<typeof schema>;
@@ -62,7 +92,28 @@ export class ConfigError extends Error {
 function conditionalIssues(source: NodeJS.ProcessEnv): string[] {
   const issues: string[] = [];
   const authMode = source.AUTH_MODE ?? 'none';
-  if (authMode !== 'none') return issues;
+
+  if (authMode === 'password') {
+    /*
+     * With authentication on there are real accounts, and accounts live in the
+     * database. Without one the server would start, accept a login form, and be
+     * unable to check anything against it.
+     */
+    if (!source.DATABASE_URL) {
+      issues.push('  DATABASE_URL: required when AUTH_MODE=password — accounts and sessions live in the database');
+    }
+    /*
+     * A session cookie without Secure travels in clear over any plain-HTTP hop.
+     * Refused outright in production rather than warned about, because the
+     * failure is silent and the consequence is somebody else's session.
+     */
+    if (source.NODE_ENV === 'production' && source.SESSION_COOKIE_SECURE === 'false') {
+      issues.push(
+        '  SESSION_COOKIE_SECURE: cannot be false in production — the session cookie would travel in the clear',
+      );
+    }
+    return issues;
+  }
 
   if (!source.OPERATOR_NAME) {
     issues.push(

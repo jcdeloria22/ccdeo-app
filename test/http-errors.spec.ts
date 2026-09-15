@@ -18,6 +18,8 @@ import { ContentMismatchError, ObjectNotFoundError } from '../src/storage/storag
 import { UnverifiedRuleError } from '../src/generators/provenance';
 import { UnknownSettingError } from '../src/settings/settings.repository';
 import { UnknownBankError } from '../src/reviewer/quiz-progress.repository';
+import { DuplicateUserError, UnknownRoleError, UnknownUserError } from '../src/auth/users.repository';
+import { WeakPasswordError } from '../src/auth/password';
 import {
   ContentNotCleanError,
   IllegalTransitionError,
@@ -44,6 +46,10 @@ const INSTANCES: Error[] = [
   new ContentNotCleanError('Quarantined'),
   new UnknownSettingError('builder.nonsense'),
   new UnknownBankError('xx'),
+  new UnknownUserError('nobody'),
+  new UnknownRoleError('superuser'),
+  new DuplicateUserError('me@dpwh.gov.ph'),
+  new WeakPasswordError(['it must be at least 12 characters']),
 ];
 
 /** A response just real enough for the filter. */

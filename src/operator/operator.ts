@@ -63,14 +63,39 @@ export function seededOperator(env: Env, role: Role = 'admin'): Actor {
 }
 
 /**
+ * Who a signed-in session belongs to, as an Actor.
+ *
+ * The role comes from the account, not from the caller: with real accounts the
+ * role someone acts under is a property of the account, and letting a caller
+ * pass one would mean a request could choose its own privileges.
+ */
+export function sessionActor(session: {
+  userId: string;
+  email: string;
+  name: string;
+  role: Role;
+}): Actor {
+  return {
+    id: session.userId,
+    name: session.name,
+    email: session.email,
+    role: session.role,
+    authMode: 'password',
+  };
+}
+
+/**
  * The actor for the current request.
  *
- * DC-01 has no requests yet, so this is the seam and nothing more. When
- * authentication lands it reads the session; callers do not change.
+ * While `AUTH_MODE=none` this is the seeded operator, and the bind guard keeps
+ * that arrangement on loopback. With authentication on there is no actor to
+ * derive from configuration — it comes from the session, which is asynchronous
+ * and lives in `ActorMiddleware`. Throwing here is therefore correct rather than
+ * unfinished: anything calling this under `password` has skipped the session.
  */
 export function currentActor(env: Env, role: Role = 'admin'): Actor {
   if (env.AUTH_MODE === 'none') return seededOperator(env, role);
   throw new OperatorNotConfiguredError(
-    'AUTH_MODE=password is configured but no session source is wired yet (arrives with authentication)',
+    'AUTH_MODE=password: the actor comes from the session, not from configuration — use ActorMiddleware',
   );
 }

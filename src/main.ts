@@ -26,6 +26,17 @@ export async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { logger: ['log', 'warn', 'error'] });
 
   /*
+   * Trust the platform's proxy, only when told to.
+   *
+   * Behind Railway's router the client address arrives in X-Forwarded-For and the
+   * scheme in X-Forwarded-Proto; without this, every session records the router's
+   * address and `req.secure` is always false. A client can set those headers
+   * itself, so trusting them with no proxy in front would let anyone claim any
+   * address — which is why it is off unless configured.
+   */
+  if (env.TRUST_PROXY) app.set('trust proxy', 1);
+
+  /*
    * The built frontend, served from the same origin as the API.
    *
    * One origin means no CORS to configure, which matters more here than it

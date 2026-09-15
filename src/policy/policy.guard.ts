@@ -34,6 +34,13 @@ export const Public = () => SetMetadata(PUBLIC_KEY, true);
 export interface PolicyRequest {
   actor?: Actor;
   authMode?: 'none' | 'password';
+  /** Set when the actor came from a session, so it can be ended on sign-out. */
+  sessionId?: string;
+  /**
+   * The account has a password an administrator issued and has not been changed.
+   * Signing in is allowed; doing anything else is not — see `PasswordChangeGuard`.
+   */
+  mustChangePassword?: boolean;
 }
 
 @Injectable()

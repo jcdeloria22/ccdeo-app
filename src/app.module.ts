@@ -14,6 +14,7 @@ import { Module, type MiddlewareConsumer, type NestModule } from '@nestjs/common
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { CoreModule } from './core/core.module';
 import { PolicyGuard } from './policy/policy.guard';
+import { PasswordChangeGuard } from './auth/password-change.guard';
 import { ActorMiddleware } from './operator/actor.middleware';
 import { RemindersModule } from './reminders/reminders.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -27,6 +28,7 @@ import { LifecycleModule } from './lifecycle/lifecycle.module';
 import { SettingsModule } from './settings/settings.module';
 import { QuizModule } from './reviewer/quiz.module';
 import { QcpModule } from './generators/qcp/qcp.module';
+import { AuthModule } from './auth/auth.module';
 import { DomainExceptionFilter } from './http/domain-exception.filter';
 
 @Module({
@@ -44,9 +46,16 @@ import { DomainExceptionFilter } from './http/domain-exception.filter';
     SettingsModule,
     QuizModule,
     QcpModule,
+    AuthModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: PolicyGuard },
+    /*
+     * Order matters: PolicyGuard establishes that there IS an actor and that the
+     * role may do this, and only then does this refuse an account still carrying
+     * a password an administrator issued. Guards run in registration order.
+     */
+    { provide: APP_GUARD, useClass: PasswordChangeGuard },
     /* Domain refusals carry their own meaning; without this they all read 500. */
     { provide: APP_FILTER, useClass: DomainExceptionFilter },
   ],
