@@ -13,6 +13,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     include: ['test/**/*.spec.ts', 'web/src/**/*.test.{ts,tsx}'],
+    globalSetup: ['test/global-setup.ts'],
     setupFiles: ['test/setup-env.ts', 'web/src/setup-dom.ts'],
     environment: 'node',
     environmentMatchGlobs: [['web/src/**', 'jsdom']],

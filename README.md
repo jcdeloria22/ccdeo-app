@@ -110,7 +110,7 @@ that to make the browser happy.
 | **DC-10** ageing panel and reminder engine | **done**, SLAs confirmed |
 | ***then*** the first QCP generator | **done**, every rule verified |
 
-540 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
+552 tests passing, none skipped — backend and frontend in one run. ClamAV 1.5.4 is
 installed and its signature database is loaded, so the real-scanner tests run.
 
 **Consolidating into this project**, decided 15 September 2026: the Document
@@ -215,16 +215,21 @@ npm run migrate
 npm test
 ```
 
-> **`npm test` empties the development database.** The suite truncates `projects`,
-> `documents`, `approvals`, `uploads`, `reminders`, `app_settings`, the slot
-> templates and `audit_events` — so anything set up by hand in the running app is
-> gone after a test run, including the Builder's saved signatories and holidays.
-> It points at whatever `DATABASE_URL` names, and there is only one database.
->
-> `quiz_progress` is the exception: those tests write as synthetic actors and
-> delete only their own rows, so study progress survives. Everything else does not.
->
-> Seed demo data back with `npm run seed:demo`, or re-run `node scripts/verify-flow.mjs`.
+**The suite runs against its own database.** It truncates `projects`, `documents`,
+`approvals`, `uploads`, `reminders`, `app_settings`, the slot templates and
+`audit_events` — it has to, because these specs assert exact counts and a hash
+chain that has to start somewhere. So `npm test` never touches `DATABASE_URL`:
+`test/setup-env.ts` appends `_test` to the database name and redirects every spec
+there, and `test/global-setup.ts` creates it on the first run. Nothing to set up.
+
+Until this existed the tests truncated the development database that was also
+serving the running app, and a test run quietly destroyed hand-made contracts,
+uploaded documents, the Builder's saved signatories and the audit trail.
+
+`TEST_DATABASE_URL` overrides where that database lives. **Its name must end in
+`_test`** — `test/test-database.ts` aborts the run otherwise, because a suite that
+truncates must not be one typo away from deleting the data it protects. That guard
+has its own tests in `test/test-database.spec.ts`.
 
 ## Storage and the scan gate
 
