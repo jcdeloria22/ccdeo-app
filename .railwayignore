@@ -1,0 +1,19 @@
+# What `railway up` must not upload.
+#
+# The CLI already respects .gitignore, so .env is excluded either way. This is
+# belt and braces for the one file whose accidental upload would put a local
+# database URL and operator identity into a build log.
+.env
+.env.*
+!.env.example
+
+node_modules
+dist
+web/dist
+.blobs
+.demo-blobs
+.pgsql
+.pgdata
+.git
+coverage
+*.log
