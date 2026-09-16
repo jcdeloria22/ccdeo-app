@@ -34,9 +34,15 @@ RUN npm run build
 # If this step fails it is almost always the mirror rate-limiting. Retry.
 FROM alpine:3.20 AS signatures
 
+# The stock freshclam.conf ships with an `Example` line that makes freshclam
+# refuse to run - a deliberate "you have not configured me yet" guard.
+# Commenting it out is the documented fix. The `|| true` only stops a future
+# image that ships no config at all from failing here for the wrong reason; the
+# `ls` below is what actually decides whether this stage succeeded.
 RUN apk add --no-cache clamav freshclam \
+ && (sed -i 's/^Example/#Example/' /etc/clamav/freshclam.conf || true) \
  && freshclam --quiet --datadir=/var/lib/clamav \
- && ls /var/lib/clamav/main.c*d
+ && ls /var/lib/clamav/main.c*d /var/lib/clamav/daily.c*d
 
 
 # ---------------------------------------------------------------------------
