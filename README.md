@@ -294,7 +294,7 @@ loopback, and the other three are what make that safe:
 | `NODE_ENV` | `production` | Makes the session cookie `Secure`, and refuses to let it not be. |
 | `TRUST_PROXY` | `true` | Behind a router that sets `X-Forwarded-For`. Off anywhere else: a client can set that header itself. |
 | `DATABASE_URL` | from the provider | Required in password mode — accounts live there. |
-| `DATABASE_SSL` | `require` | Or `no-verify` for a provider whose chain is not publicly rooted. A private network between app and database needs neither. |
+| `DATABASE_SSL` | `no-verify` | **Railway's internal Postgres presents a self-signed certificate**, so `require` fails with `self-signed certificate in certificate chain` and the app will not start. `no-verify` still encrypts; it cannot authenticate a chain that is not publicly rooted. Use `require` only where the certificate is. |
 
 Then create the first account. There is no bootstrap-from-environment path,
 because a password in an environment variable is a password in the platform's
@@ -303,6 +303,17 @@ dashboard and its logs:
 ```bash
 npm run user:create -- --email you@dpwh.gov.ph --name "Your Name" --role admin
 ```
+
+In a **deployed container** that exact command does not work: `ts-node` is a dev
+dependency the production image does not install, and `src/` is not copied into
+it. Use the compiled form, which is:
+
+```bash
+npm run user:create:prod -- --email you@dpwh.gov.ph --name "Your Name" --role admin
+```
+
+With no accounts nobody can sign in at all, so this is the first command to run
+against a fresh deployment.
 
 **Two things a hosted deployment changes, and neither is cosmetic.**
 

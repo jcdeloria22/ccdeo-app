@@ -20,7 +20,8 @@
     "check:vendored": "node scripts/sync-vendored.mjs --check",
     "user:create": "ts-node src/auth/create-user.cli.ts",
     "build:api": "tsc -p tsconfig.build.json",
-    "migrate:deploy": "node dist/db/migrate.js"
+    "migrate:deploy": "node dist/db/migrate.js",
+    "user:create:prod": "node dist/auth/create-user.cli.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

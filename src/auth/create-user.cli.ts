@@ -14,6 +14,11 @@
  *
  *   npm run user:create -- --email me@dpwh.gov.ph --name "Jayz" --role admin
  *
+ * In a deployed container there is no TypeScript and no `src/`, so the compiled
+ * form is the one that works there — `npm run user:create:prod`, or directly:
+ *
+ *   node dist/auth/create-user.cli.js --email me@dpwh.gov.ph --name "Jayz" --role admin
+ *
  * `--password` exists for the case where you are creating your own account and
  * would rather choose. It is read from the environment variable it names, not
  * from the argument, so it does not land in shell history:
