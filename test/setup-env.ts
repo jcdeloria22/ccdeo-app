@@ -12,12 +12,21 @@
  * had to change. The database itself is created in `test/global-setup.ts`; the
  * rules and the guard are in `test/test-database.ts`.
  */
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { loadDotenv } from '../src/config/load-dotenv';
-import { resolveTestUrl } from './test-database';
+import { resolveTestUrl, UNREACHABLE_MARKER } from './test-database';
 
 loadDotenv(path.join(__dirname, '..', '.env'));
 
 if (process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = resolveTestUrl(process.env.DATABASE_URL, process.env.TEST_DATABASE_URL);
+  /*
+   * `global-setup.ts` leaves this marker when the cluster could not be reached.
+   * Clearing DATABASE_URL here makes the database specs skip the way they
+   * already do when none is configured, instead of every one of them failing
+   * with a connection error — and, before this existed, instead of vitest
+   * aborting the whole run and reporting `no tests`.
+   */
+  if (existsSync(UNREACHABLE_MARKER)) delete process.env.DATABASE_URL;
+  else process.env.DATABASE_URL = resolveTestUrl(process.env.DATABASE_URL, process.env.TEST_DATABASE_URL);
 }

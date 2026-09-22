@@ -12,7 +12,20 @@
  * be tested rather than trusted.
  */
 
+import path from 'node:path';
+
 export const TEST_SUFFIX = '_test';
+
+/**
+ * Where `global-setup.ts` records that the database could not be reached.
+ *
+ * A file rather than an environment variable because the global setup runs in
+ * its own process and cannot alter what the workers inherit. It lives under
+ * `node_modules` so it is already ignored by git and cleared by a clean install,
+ * and it is removed at the start of every run so a stale one cannot make a
+ * later run skip silently.
+ */
+export const UNREACHABLE_MARKER = path.join(__dirname, '..', 'node_modules', '.cache', 'vitest-no-database');
 
 export function databaseName(url: string): string {
   return decodeURIComponent(new URL(url).pathname.replace(/^\//, ''));
